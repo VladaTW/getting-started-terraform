@@ -1,0 +1,7 @@
+prefix = "vld-4-dev"
+region = "eu-west-2"
+vpc_cidr_block    = "10.0.0.0/16"
+vpc_public_subnet1_cidr_block   = "10.0.0.0/24"
+billing_code= "VLD"
+company = "Globomantics"
+project = "Globomantics Pluralsight"

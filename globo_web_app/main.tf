@@ -1,3 +1,6 @@
+##################################################################################
+# PROVIDERS
+##################################################################################
 
 ##################################################################################
 # DATA
@@ -13,13 +16,21 @@ data "aws_ssm_parameter" "amzn2_linux" {
 
 # NETWORKING #
 resource "aws_vpc" "app" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
+  tags = {
+    # Name = "${var.prefix}-vpc"
+    Name = format("%s-%s-vpc", var.prefix, var.region)
+
+  }
 
 }
 
 resource "aws_internet_gateway" "app" {
   vpc_id = aws_vpc.app.id
+  tags = {
+    Name = format("%s-%s-gateway", var.prefix, var.region)
+  }
 
 }
 
@@ -27,6 +38,9 @@ resource "aws_subnet" "public_subnet1" {
   cidr_block              = "10.0.0.0/24"
   vpc_id                  = aws_vpc.app.id
   map_public_ip_on_launch = true
+  tags = {
+    Name = format("%s-%s-subnet1", var.prefix, var.region)
+  }
 }
 
 # ROUTING #
@@ -36,6 +50,9 @@ resource "aws_route_table" "app" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.app.id
+  }
+  tags = {
+    Name = format("%s-%s-route-table", var.prefix, var.region)
   }
 }
 
@@ -49,6 +66,10 @@ resource "aws_route_table_association" "app_subnet1" {
 resource "aws_security_group" "nginx_sg" {
   name   = "nginx_sg"
   vpc_id = aws_vpc.app.id
+
+  tags = {
+    Name = format("%s-%s-security-group", var.prefix, var.region)
+  }
 
   # HTTP access from anywhere
   ingress {
@@ -74,6 +95,9 @@ resource "aws_instance" "nginx1" {
   subnet_id              = aws_subnet.public_subnet1.id
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
 
+  tags = {
+    Name = format("%s-%s-instance", var.prefix, var.region)
+  }
   user_data = <<EOF
 #! /bin/bash
 sudo amazon-linux-extras install -y nginx1
@@ -83,3 +107,8 @@ echo '<html><head><title>Taco Team Server</title></head><body style=\"background
 EOF
 
 }
+
+# output "public_dns_hostname" {
+#   value = aws_instance.web_server.public_dns
+#   description = "Public DNS hostname of the web server"
+# }
