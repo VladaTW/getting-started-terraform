@@ -1,14 +1,14 @@
 variable "region" {
   type        = string
   description = "The AWS region to deploy the application"
-  sensitive = false
-#   default     = "us-east-1"
+  sensitive   = false
+  #   default     = "us-east-1"
 }
 
 variable "prefix" {
   type        = string
   description = "Prefix for resource names"
-} 
+}
 
 
 variable "aws_access_key" {
@@ -16,6 +16,17 @@ variable "aws_access_key" {
   description = "AWS access key"
   sensitive   = true
 }
+
+variable "availability_zone" {
+  type        = string
+  description = "Availability zone for the resources"
+}
+
+variable "availability_zones" {
+  type        = list(string)
+  description = "List of Availability Zones where subnets will be created"
+}
+
 
 variable "aws_secret_key" {
   type        = string
@@ -36,10 +47,9 @@ variable "vpc_cidr_block" {
   description = "Base CIDR Block for VPC"
 }
 
-variable "vpc_public_subnet1_cidr_block" {
-  type        = string
-            description  = "CIDR Block for Subnet 1 in VPC"
-  # default     = "10.0.0.0/24"
+variable "vpc_public_subnets_cidr_block" {
+  type        = list(string)
+  description = "CIDR Blocks for Subnet in VPC"
 }
 
 variable "map_public_ip_on_launch" {
@@ -51,7 +61,6 @@ variable "map_public_ip_on_launch" {
 variable "instance_type" {
   type        = string
   description = "Type for EC2 Instnace"
-  default     = "t3.micro"
 }
 
 ## Add these after the local value discussion
